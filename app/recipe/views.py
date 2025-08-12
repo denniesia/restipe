@@ -30,7 +30,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-class TagViewSets(mixins.ListModelMixin, viewsets.GenericViewSet):
+class TagViewSets(mixins.UpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = serializers.TagSerializer
     queryset = Tag.objects.all()
     authentication_classes = [TokenAuthentication]
@@ -40,3 +40,5 @@ class TagViewSets(mixins.ListModelMixin, viewsets.GenericViewSet):
         return self.queryset.filter(
             user=self.request.user
         ).order_by('-name')
+
+
