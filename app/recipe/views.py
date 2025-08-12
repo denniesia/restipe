@@ -9,7 +9,6 @@ from recipe import serializers
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.RecipeSerializer
     queryset = Recipe.objects.all()
     authentication_class = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -21,6 +20,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
             user=self.request.user
             ).order_by('-id')
 
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return serializers.RecipeSerializer
+    
+        return serializers.RecipeDetailSerializer
     
 
 
