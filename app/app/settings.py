@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 APPS = [
     'core',
     'user', 
+    'recipe',
 ]
 
 INSTALLED_APPS = [
