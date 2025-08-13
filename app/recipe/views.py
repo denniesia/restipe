@@ -45,7 +45,9 @@ class TagViewSets(mixins.DestroyModelMixin,
         ).order_by('-name')
 
 
-class IngredientViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class IngredientViewSet(mixins.UpdateModelMixin, 
+                        mixins.ListModelMixin, 
+                        viewsets.GenericViewSet):
     serializer_class = serializers.IngredientSerializer
     queryset = Ingredient.objects.all()
     authentication_classes = [TokenAuthentication]
