@@ -45,7 +45,8 @@ class TagViewSets(mixins.DestroyModelMixin,
         ).order_by('-name')
 
 
-class IngredientViewSet(mixins.UpdateModelMixin, 
+class IngredientViewSet(mixins.DestroyModelMixin,
+                        mixins.UpdateModelMixin, 
                         mixins.ListModelMixin, 
                         viewsets.GenericViewSet):
     serializer_class = serializers.IngredientSerializer
