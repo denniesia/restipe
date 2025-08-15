@@ -77,7 +77,7 @@ class PrivateRecipeAPITests(TestCase):
 
         response = self.client.get(RECIPES_URL)
 
-        recipes = Recipe.objects.all().order_by('-id')
+        recipes = Recipe.objects.all().order_by('id')
 
         serializer = RecipeSerializer(recipes, many=True)
 

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiParameter, OpenApiTypes
 
 from rest_framework import viewsets, mixins, status
 from rest_framework.decorators import action
@@ -10,18 +10,48 @@ from rest_framework.permissions import IsAuthenticated
 from core.models import Recipe, Tag, Ingredient
 from recipe import serializers
 
-
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                'tags',
+                OpenApiTypes.STR,
+                description='Comma separated list of tags IDs to filter'
+            ),
+            OpenApiParameter(
+                'ingredients',
+                OpenApiTypes.STR,
+                description='Comma separated list of ingredients IDs to filter'
+            ),
+        ]
+    )
+)
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     authentication_class = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
+    def _params_to_ints(self, queryset):
+        return [int(str_id) for str_id in queryset.split(',')]  
+
 
     def get_queryset(self):
         #retrieve recipes for authenticated user
-        return self.queryset.filter(
+        tags = self.request.query_params.get('tags')
+        ingredients = self.request.query_params.get('ingredients')
+        queryset = self.queryset
+
+        if tags:
+            tag_ids = self._params_to_ints(tags)
+            queryset = queryset.filter(tags__id__in=tag_ids)
+
+        if ingredients:
+            ingredients_ids = self._params_to_ints(ingredients)
+            queryset = queryset.filter(ingredients__id__in=ingredients_ids)
+
+        return queryset.filter(
             user=self.request.user
-            ).order_by('-id')
+        ).order_by('id').distinct()
 
     def get_serializer_class(self):
         if self.action == 'list':
